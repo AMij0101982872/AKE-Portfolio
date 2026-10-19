@@ -16,6 +16,7 @@ export const ui = {
     skills: { fr: "Compétences", en: "Skills" },
     projects: { fr: "Projets", en: "Projects" },
     experience: { fr: "Parcours", en: "Experience" },
+    certifications: { fr: "Certifications", en: "Certifications" },
     contact: { fr: "Contact", en: "Contact" },
   },
   sections: {
@@ -24,6 +25,7 @@ export const ui = {
     projects: { fr: "Projets sélectionnés", en: "Selected projects" },
     experience: { fr: "Expérience", en: "Experience" },
     education: { fr: "Formation", en: "Education" },
+    certifications: { fr: "Certifications", en: "Certifications" },
     contact: { fr: "Travaillons ensemble", en: "Let's work together" },
   },
   cta: {
@@ -32,7 +34,16 @@ export const ui = {
     email: { fr: "M'écrire", en: "Email me" },
     code: { fr: "Code", en: "Code" },
     demo: { fr: "Démo", en: "Demo" },
+    verify: { fr: "Vérifier", en: "Verify" },
+    view: { fr: "Voir le certificat", en: "View certificate" },
+    close: { fr: "Fermer", en: "Close" },
   },
+  iAm: { fr: "Je suis", en: "I'm" },
+  scroll: { fr: "Défiler", en: "Scroll" },
+  basedIn: { fr: "Basé à", en: "Based in" },
+  internships: { fr: "stages", en: "internships" },
+  featured: { fr: "Projet phare", en: "Featured" },
+  moreProjects: { fr: "Autres projets", en: "More projects" },
   contactText: {
     fr: "Ouvert à un stage de fin d'études (PFE) et aux collaborations autour des agents IA et de la donnée.",
     en: "Open to an end-of-studies internship and to collaborations on AI agents and data.",

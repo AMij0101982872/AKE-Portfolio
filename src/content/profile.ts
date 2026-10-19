@@ -28,6 +28,15 @@ export type Experience = {
   points: T[];
 };
 
+export type Certification = {
+  title: string;
+  issuer: string;
+  date: T;
+  image: string; // fichier dans /public/certifications
+  verify?: string; // lien de vérification officiel
+  featured?: boolean;
+};
+
 export type Education = {
   degree: T;
   school: string;
@@ -42,6 +51,11 @@ export const profile = {
     fr: "Élève ingénieur Big Data & IA · Data Science & agents IA",
     en: "Big Data & AI Engineering Student · Data Science & AI Agents",
   } satisfies T,
+  /** Rôles qui défilent dans le hero. */
+  roles: {
+    fr: ["Data Scientist", "Data Analyst", "créateur d'agents IA", "ingénieur Big Data"],
+    en: ["a Data Scientist", "a Data Analyst", "an AI agent builder", "a Big Data engineer"],
+  },
   tagline: {
     fr: "Je transforme les données en insights et en modèles prédictifs, et je construis des agents IA qui automatisent de vrais processus métier.",
     en: "I turn data into insights and predictive models, and build AI agents that automate real business processes.",
@@ -51,6 +65,11 @@ export const profile = {
     fr: "Disponible pour un PFE · février 2027",
     en: "Available for an internship · February 2027",
   } satisfies T,
+  highlight: {
+    fr: "1ère place nationale · DataTour 2026",
+    en: "National 1st place · DataTour 2026",
+  } satisfies T,
+  photo: "/ivan-ake.jpg",
   email: "akeivanjr10@gmail.com",
   cvFile: "/cv-ivan-ake.pdf", // dépose le PDF dans /public
   links: [
@@ -96,11 +115,65 @@ export const profile = {
       group: { fr: "Web & déploiement", en: "Web & deployment" },
       items: ["React", "HTML", "CSS", "JavaScript", "Supabase", "Docker", "AWS", "Git", "Vercel", "Netlify", "Render"],
     },
-    {
-      group: { fr: "Certifications (IBM)", en: "Certifications (IBM)" },
-      items: ["What is Data Science?", "Tools for Data Science", "EDA for Machine Learning", "Data Science Methodology"],
-    },
   ] satisfies { group: T; items: string[] }[],
+
+  certifications: [
+    {
+      title: "DataTour 2026 · 1ère place nationale",
+      issuer: "Data Afrique Hub × Fatala · Certificat d'Excellence",
+      date: { fr: "Juil. 2026", en: "Jul 2026" },
+      image: "/certifications/datatour-2026-excellence.jpg",
+      featured: true,
+    },
+    {
+      title: "DataTour 2026 · Participation (CANSD)",
+      issuer: "Data Afrique Hub",
+      date: { fr: "Juin – juil. 2026", en: "Jun – Jul 2026" },
+      image: "/certifications/datatour-2026.jpg",
+    },
+    {
+      title: "Data Visualization with Python",
+      issuer: "IBM · Coursera",
+      date: { fr: "Juin 2026", en: "Jun 2026" },
+      image: "/certifications/data-visualization-python.jpg",
+      verify: "https://coursera.org/verify/92HT46HRWDP0",
+    },
+    {
+      title: "Data Analysis with Python",
+      issuer: "IBM · Coursera",
+      date: { fr: "Mai 2026", en: "May 2026" },
+      image: "/certifications/data-analysis-python.jpg",
+      verify: "https://coursera.org/verify/9YLYOFK5HS8W",
+    },
+    {
+      title: "Machine Learning with Python",
+      issuer: "IBM · Coursera",
+      date: { fr: "Mars 2026", en: "Mar 2026" },
+      image: "/certifications/machine-learning-python.jpg",
+      verify: "https://coursera.org/verify/7CPGYWK87N5O",
+    },
+    {
+      title: "Data Science Methodology",
+      issuer: "IBM · Coursera",
+      date: { fr: "Févr. 2026", en: "Feb 2026" },
+      image: "/certifications/data-science-methodology.jpg",
+      verify: "https://coursera.org/verify/5NA2C1V6O5X2",
+    },
+    {
+      title: "Tools for Data Science",
+      issuer: "IBM · Coursera",
+      date: { fr: "Janv. 2026", en: "Jan 2026" },
+      image: "/certifications/tools-for-data-science.jpg",
+      verify: "https://coursera.org/verify/OMAOXNO0MYIF",
+    },
+    {
+      title: "What is Data Science?",
+      issuer: "IBM · Coursera",
+      date: { fr: "Nov. 2025", en: "Nov 2025" },
+      image: "/certifications/what-is-data-science.jpg",
+      verify: "https://coursera.org/verify/M2JU4IS82JH6",
+    },
+  ] as Certification[],
 
   projects: [
     // TODO(CV) — ajoute les liens GitHub (repo) / démo de chaque projet
@@ -125,22 +198,34 @@ export const profile = {
       ],
     },
     {
-      title: "Plateforme multi-agents RH · Holokia",
+      title: "Holokia · Plateforme de 5 agents IA",
       year: "2026",
       tags: ["FastAPI", "LangChain", "LLM", "React", "Supabase", "n8n"],
       featured: true,
       summary: {
-        fr: "Plateforme multi-agents qui automatise un processus RH de bout en bout.",
-        en: "Multi-agent platform automating an HR process end to end.",
+        fr: "Plateforme d'automatisation interne basée sur 5 agents IA spécialisés, utilisée directement par la direction de la startup.",
+        en: "Internal automation platform built on 5 specialised AI agents, used directly by the startup's leadership.",
       },
       highlights: [
         {
-          fr: "Agents de veille technologique, d'analyse et tri de CV (ATS) et de génération de comptes rendus",
-          en: "Agents for tech watch, CV screening (ATS) and automatic meeting minutes",
+          fr: "Agent ATS — analyse et scoring automatique des CV reçus par email (score 0-100 contextuel selon le poste)",
+          en: "ATS agent — automatic analysis and scoring of CVs received by email (0-100 score, contextual to the role)",
         },
         {
-          fr: "Orchestration exposée via une API, avec une interface de pilotage React",
-          en: "Orchestration exposed through an API, with a React control panel",
+          fr: "Agent Comptes rendus — transcription audio (micro et réunions en ligne) et génération d'un CR structuré",
+          en: "Minutes agent — audio transcription (mic and online meetings) and structured meeting minutes",
+        },
+        {
+          fr: "Agent Veille — collecte RSS automatique toutes les 12 h, résumé et scoring par IA",
+          en: "Watch agent — automatic RSS collection every 12 h, AI summary and scoring",
+        },
+        {
+          fr: "Agent Entretien — entretiens menés par l'IA sur WhatsApp via l'API Holokia",
+          en: "Interview agent — AI-led interviews on WhatsApp through the Holokia API",
+        },
+        {
+          fr: "Agent Directeur — agent conversationnel central avec mémoire globale des KPIs et plus de 35 actions en langage naturel",
+          en: "Director agent — central conversational agent with global KPI memory and 35+ natural-language actions",
         },
       ],
     },
@@ -256,12 +341,16 @@ export const profile = {
       period: { fr: "Mars 2026 — août 2026", en: "Mar 2026 — Aug 2026" },
       points: [
         {
-          fr: "Conception et mise en place d'une plateforme multi-agents automatisant un processus RH de bout en bout.",
-          en: "Designed and built a multi-agent platform automating an HR process end to end.",
+          fr: "Conception et développement d'une plateforme d'automatisation interne basée sur 5 agents IA spécialisés, utilisée directement par la direction de la startup.",
+          en: "Designed and built an internal automation platform based on 5 specialised AI agents, used directly by the startup's leadership.",
         },
         {
-          fr: "Agents spécialisés orchestrés : veille technologique, analyse et tri de CV (ATS), génération automatique de comptes rendus.",
-          en: "Orchestrated specialised agents: tech watch, CV screening (ATS), automatic meeting minutes.",
+          fr: "Agents ATS (scoring des CV reçus par email), Comptes rendus (transcription audio), Veille (RSS toutes les 12 h) et Entretien (WhatsApp).",
+          en: "ATS (scoring CVs received by email), Minutes (audio transcription), Watch (RSS every 12 h) and Interview (WhatsApp) agents.",
+        },
+        {
+          fr: "Agent Directeur central : mémoire globale des KPIs et plus de 35 actions pilotables en langage naturel.",
+          en: "Central Director agent: global KPI memory and 35+ actions driven in natural language.",
         },
         {
           fr: "Exposition des services via une API (FastAPI) et interface de pilotage React.",
