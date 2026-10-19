@@ -1,0 +1,98 @@
+name: Deploy
+
+# Sur push vers main :
+#   1. build du site statique via le Dockerfile (target "export") → GitHub Pages
+#   2. build de l'image Nginx (target "runtime") → ghcr.io/<toi>/<repo>  (prête pour un VPS)
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+jobs:
+  pages-build:
+    name: Build site (Docker → static export)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v5
+
+      # Donne le chemin de base : "" pour <user>.github.io, "/<repo>" sinon
+      - id: pages
+        uses: actions/configure-pages@v5
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Export statique via Docker
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          target: export
+          build-args: |
+            NEXT_PUBLIC_BASE_PATH=${{ steps.pages.outputs.base_path }}
+          outputs: type=local,dest=./out
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - run: touch out/.nojekyll
+
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: ./out
+
+  pages-deploy:
+    name: Deploy → GitHub Pages
+    needs: pages-build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
+
+  image:
+    name: Publish image → GHCR
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}
+          tags: |
+            type=raw,value=latest
+            type=sha,format=short
+
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          target: runtime
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

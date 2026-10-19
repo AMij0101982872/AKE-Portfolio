@@ -1,36 +1,56 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Portfolio — Ivan Aké
 
-## Getting Started
+Portfolio bilingue (FR/EN) en **Next.js 16 + Tailwind 4**, exporté en statique.
+Un seul `Dockerfile` sert au local, à la CI et à la production : ce que tu vois en local est exactement ce qui est publié.
 
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+```
+            ┌──────────── Dockerfile (multi-stage) ────────────┐
+            │ deps → dev        (hot-reload, local)            │
+            │ deps → build      (lint + types + next build)    │
+            │          ├→ export   (./out statique)  → GitHub Pages
+            │          └→ runtime  (Nginx :8080)     → GHCR / VPS / local
+            └──────────────────────────────────────────────────┘
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Modifier le contenu
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Tout le texte est dans **`src/content/profile.ts`** (projets, expériences, compétences, liens), chaque champ en `fr` et `en`.
+Les libellés d'interface sont dans `src/content/i18n.ts`. Mets ton CV PDF dans `public/cv-ivan-ake.pdf`.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Local (Docker)
 
-## Learn More
+| Commande | Effet | URL |
+|---|---|---|
+| `make dev` | serveur de dev, hot-reload | http://localhost:3000/fr/ |
+| `make prod` | image de production Nginx | http://localhost:8080 |
+| `make check` | lint + types + build, comme la CI | — |
+| `make export` | génère `./out` via Docker | — |
 
-To learn more about Next.js, take a look at the following resources:
+Sans `make` : `docker compose up dev` et `docker compose up --build prod`.
+Sans Docker : `npm ci && npm run dev`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Production (GitHub Actions)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| Workflow | Déclencheur | Ce qu'il fait |
+|---|---|---|
+| `ci.yml` | Pull Request / branches | build Docker (lint, types, build) + smoke test de l'image Nginx |
+| `deploy.yml` | push sur `main` | export statique via Docker → **GitHub Pages**, et image → **ghcr.io** |
 
-## Deploy on Vercel
+### Mise en route (une seule fois)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Crée le repo sur GitHub et pousse le code :
+   ```bash
+   git remote add origin git@github.com:<ton-user>/<repo>.git
+   git push -u origin main
+   ```
+   Astuce : nomme le repo **`<ton-user>.github.io`** pour avoir l'URL courte `https://<ton-user>.github.io/`.
+   Avec un autre nom, le site sera sur `https://<ton-user>.github.io/<repo>/` (le préfixe est géré automatiquement).
+2. Sur GitHub : **Settings → Pages → Source : GitHub Actions**.
+3. Protège `main` (Settings → Branches) en exigeant le check **CI** : on travaille sur une branche, on ouvre une PR, la CI valide, on merge → déploiement automatique.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Passer sur un VPS plus tard
+
+L'image est déjà publiée à chaque push :
+```bash
+docker run -d -p 80:8080 --restart unless-stopped ghcr.io/<ton-user>/<repo>:latest
+```

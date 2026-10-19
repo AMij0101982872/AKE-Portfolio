@@ -1,0 +1,11 @@
+node_modules
+.next
+out
+.git
+.github
+*.log
+.env*
+!.env.example
+Dockerfile
+compose.yaml
+README.md
