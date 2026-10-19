@@ -12,8 +12,10 @@
   --muted: #5d636e;
   --line: #e2ded4;
   --accent: #0f766e;
+  --accent-2: #4f46e5;
   --accent-ink: #ffffff;
   --glow: rgba(15, 118, 110, 0.12);
+  --spot: rgba(15, 118, 110, 0.10);
 }
 
 [data-theme="dark"] {
@@ -23,8 +25,10 @@
   --muted: #8b939e;
   --line: #222932;
   --accent: #2dd4bf;
+  --accent-2: #818cf8;
   --accent-ink: #04201d;
   --glow: rgba(45, 212, 191, 0.10);
+  --spot: rgba(45, 212, 191, 0.12);
 }
 
 @theme inline {
@@ -34,6 +38,7 @@
   --color-muted: var(--muted);
   --color-line: var(--line);
   --color-accent: var(--accent);
+  --color-accent-2: var(--accent-2);
   --color-accent-ink: var(--accent-ink);
   --font-sans: var(--ff-body), system-ui, sans-serif;
   --font-display: var(--ff-display), system-ui, sans-serif;
@@ -64,6 +69,30 @@ body {
 ::selection {
   background: var(--accent);
   color: var(--accent-ink);
+}
+
+.no-scrollbar { scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+
+/* Texte en dégradé (accent → accent-2) */
+.text-gradient {
+  background: linear-gradient(100deg, var(--accent), var(--accent-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Animations légères : uniquement transform, exécutées par le compositeur */
+@media (prefers-reduced-motion: no-preference) {
+  .marquee { animation: marquee linear infinite; will-change: transform; }
+  .marquee-reverse { animation-direction: reverse; }
+  .aurora { animation: aurora 24s ease-in-out infinite alternate; will-change: transform; }
+  .aurora-2 { animation-duration: 30s; animation-direction: alternate-reverse; }
+}
+@keyframes marquee { to { transform: translateX(-50%); } }
+@keyframes aurora {
+  from { transform: translate(0, 0) scale(1); }
+  to { transform: translate(-8%, 10%) scale(1.12); }
 }
 
 @media (prefers-reduced-motion: reduce) {
