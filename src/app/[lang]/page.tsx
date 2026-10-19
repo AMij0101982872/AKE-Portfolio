@@ -20,6 +20,7 @@ import {
   SplitTitle,
   Stagger,
   StaggerItem,
+  Tilt3D,
   TiltCard,
   TimelineLine,
 } from "@/components/motion";
@@ -261,11 +262,9 @@ export default async function Home({ params }: PageProps<"/[lang]">) {
                   <ul className="mt-5 grid grid-cols-3 gap-x-2 gap-y-4 sm:grid-cols-4">
                     {g.items.map((s) => (
                       <li key={s} className="group flex flex-col items-center gap-2 text-center">
-                        <LogoTile
-                          name={s}
-                          size={30}
-                          className="transition duration-300 group-hover:-translate-y-1 group-hover:shadow-md"
-                        />
+                        <Tilt3D>
+                          <LogoTile name={s} size={30} />
+                        </Tilt3D>
                         <span className="text-xs leading-tight text-muted transition group-hover:text-ink">{s}</span>
                       </li>
                     ))}

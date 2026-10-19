@@ -190,14 +190,16 @@ export function SkillLogo({ name, size = 28 }: { name: string; size?: number }) 
   );
 }
 
-/** Tuile blanche contenant le logo. */
+/** Tuile en relief contenant le logo (biseau, reflet, ombres ; le logo flotte au-dessus). */
 export function LogoTile({ name, size = 28, className = "" }: { name: string; size?: number; className?: string }) {
   return (
     <span
-      className={`grid shrink-0 place-items-center rounded-xl border border-black/5 bg-white shadow-sm ${className}`}
-      style={{ width: size + 18, height: size + 18 }}
+      className={`tile-3d relative grid shrink-0 place-items-center rounded-2xl ${className}`}
+      style={{ width: size + 22, height: size + 22 }}
     >
-      <SkillLogo name={name} size={size} />
+      <span className="logo-3d relative grid place-items-center">
+        <SkillLogo name={name} size={size} />
+      </span>
     </span>
   );
 }

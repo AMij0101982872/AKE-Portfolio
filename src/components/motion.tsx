@@ -235,6 +235,36 @@ export function TiltCard({ children, className }: { children: ReactNode; classNa
   );
 }
 
+/** Inclinaison 3D d'une tuile de logo sous la souris (la tuile .tile-3d et le logo .logo-3d gèrent la profondeur). */
+export function Tilt3D({ children, className }: { children: ReactNode; className?: string }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const rx = useSpring(0, { stiffness: 260, damping: 18 });
+  const ry = useSpring(0, { stiffness: 260, damping: 18 });
+  const z = useSpring(0, { stiffness: 260, damping: 18 });
+  return (
+    <motion.span
+      ref={ref}
+      className={`inline-block [transform-style:preserve-3d] ${className ?? ""}`}
+      style={{ rotateX: rx, rotateY: ry, z, transformPerspective: 500 }}
+      onPointerMove={(e) => {
+        const r = ref.current!.getBoundingClientRect();
+        const px = (e.clientX - r.left) / r.width - 0.5;
+        const py = (e.clientY - r.top) / r.height - 0.5;
+        ry.set(px * 50);
+        rx.set(-py * 50);
+        z.set(18);
+      }}
+      onPointerLeave={() => {
+        rx.set(0);
+        ry.set(0);
+        z.set(0);
+      }}
+    >
+      {children}
+    </motion.span>
+  );
+}
+
 /** Nombre qui compte jusqu'à sa valeur quand il apparaît (ex. « 4 », « 1ère »). */
 export function CountUp({ value }: { value: string }) {
   const ref = useRef<HTMLSpanElement>(null);
